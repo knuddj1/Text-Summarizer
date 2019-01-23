@@ -27,6 +27,7 @@ class Trainer:
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
         print("Model total parameters: ", sum([p.nelement() for p in model.parameters()]))
+
         optim = torch.optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.98), eps=1e-9)
         return model, optim
 

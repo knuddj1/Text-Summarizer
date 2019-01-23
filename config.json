@@ -1,0 +1,16 @@
+{
+    "path": null,
+    "min_len": 10,
+    "max_len": 30,
+    "worker": 8,
+    "voc_size": 20000,
+    "batch": 512,
+    "shuffle": true,
+    "embed": 128,
+    "d_model": 256,
+    "heads": 8,
+    "layers": 3,
+    "dff": 2048,
+    "epoch": 10,
+    "save": null
+}
