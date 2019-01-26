@@ -41,8 +41,9 @@ class SentenceSpider(scrapy.Spider):
     def parse_abs_links(self, response):
         sents = response.xpath('//*[@id="examples-ul-content"]/li/div[@class="li_content"]').extract()
 
-        with open(response.meta.get('file_path'), 'w') as f:
+        with open(response.meta.get('file_path'), mode='w', encoding='utf-8-sig', errors='ignore') as f:
             for s  in sents:
-                f.write(re.sub('<[^>]+>', '', s) + '\n')
+                s = re.sub('<[^>]+>', '', s) + '\n'
+                f.write(s)
         
         yield None
