@@ -21,7 +21,7 @@ USER_AGENT="Mozilla/5.0"
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
-#DOWNLOAD_DELAY=0.5
+DOWNLOAD_DELAY=0.1
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
