@@ -3,7 +3,7 @@ import json
 import os
 import re
 
-out_dir = 'C:/Users/The Baboon/Desktop/sentence_scraper/saves'
+out_dir = os.getcwd() + '\\data'
 base_url = 'https://sentence.yourdictionary.com/'
 
 class SentenceSpider(scrapy.Spider):
@@ -12,7 +12,10 @@ class SentenceSpider(scrapy.Spider):
     start_urls = [base_url]
 
     def parse(self, response):
-
+        
+        if not os.path.exists(out_dir):
+            os.mkdir(out_dir)
+         
         links = response.xpath('//*[@id="browse_section"]/div[@class="definitions_slider"]/ul[@class="bxslider"]/li/span/a/@href').extract()
 
         for link in links:
@@ -39,8 +42,9 @@ class SentenceSpider(scrapy.Spider):
     def parse_abs_links(self, response):
         sents = response.xpath('//*[@id="examples-ul-content"]/li/div[@class="li_content"]').extract()
 
-        with open(response.meta.get('file_path'), 'w') as f:
+        with open(response.meta.get('file_path'), mode='w', encoding='utf-8-sig', errors='ignore') as f:
             for s  in sents:
-                f.write(re.sub('<[^>]+>', '', s) + '\n')
+                s = re.sub('<[^>]+>', '', s) + '\n'
+                f.write(s)
         
         yield None
