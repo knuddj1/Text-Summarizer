@@ -11,7 +11,7 @@ def nopeak_mask(size):
 
 def create_masks(src, trg, pad):
     
-    src_mask = (src != opt.pad).unsqueeze(-2)
+    src_mask = (src != pad).unsqueeze(-2)
 
     if trg is not None:
         trg_mask = (trg != pad).unsqueeze(-2)

@@ -10,7 +10,7 @@ class Trainer:
                  d_model, n_layers, heads, d_ff, max_seq_len):
         self.vocab_size = vocab_size
         self.embed_dim = embed_dim
-        self.d_model = d_model,
+        self.d_model = d_model
         self.n_layers = n_layers
         self.heads = heads
         self.d_ff = d_ff
@@ -19,6 +19,7 @@ class Trainer:
 
 
     def _setup_model(self):
+        print("Building model. .")
         model = Transformer( self.vocab_size, self.vocab_size, self.embed_dim,
                             self.d_model, self.n_layers, self.heads, 
                             self.d_ff, self.max_seq_len)
@@ -26,15 +27,19 @@ class Trainer:
         for p in model.parameters():
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
-        print("Model total parameters: ", sum([p.nelement() for p in model.parameters()]))
+        print("Model successfully built")
+        print("Total parameters: ", sum([p.nelement() for p in model.parameters()]))
 
         optim = torch.optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.98), eps=1e-9)
         return model, optim
 
 
     def train(self, train_iter, loss_func, epochs, target_pad,
-            save_dir, vocab, save_every=10, print_every=100):
+            save_dir, vocab, save_every=10, print_every=5000):
 
+        print("Training started")    
+    
+        self.model.cuda()
         self.model.train()
         start = time.time()
         temp = start
@@ -43,23 +48,25 @@ class Trainer:
         for epoch in range(epochs):
         
             for i, batch in enumerate(train_iter):
+                self.model.zero_grad()
+
                 src = batch.transpose(0,1).cuda()
                 
                 trg_input = src[:, :-1]
                 
                 ys = src[:, 1:].contiguous().view(-1)
                 
-                src_mask, trg_mask = create_masks(src, trg_input)
+                src_mask, trg_mask = create_masks(src, trg_input, target_pad)
                 
-                preds = model(src, trg_input, src_mask, trg_mask)
+                preds = self.model(src, trg_input, src_mask, trg_mask)
                 
                 self.optim.zero_grad()
                 
-                loss = loss_func(preds.view(-1, preds.size(-1)), results, ignore_index=target_pad)
+                loss = loss_func(preds.view(-1, preds.size(-1)), ys, ignore_index=target_pad)
                 loss.backward()
                 self.optim.step()
                 
-                total_loss += loss.data[0]
+                total_loss += loss.item()
                 if (i + 1) % print_every == 0:
                     loss_avg = total_loss / print_every
                     print("time = %dm, epoch %d, iter = %d, loss = %.3f, \
@@ -91,7 +98,7 @@ class Trainer:
             'decoder': self.model.decoder.state_dict(),
             'out': self.model.out.state_dict(),
             'vocab': vocab.__dict__,
-            'optim': self.optim,
+            'optim': self.optim.state_dict(),
             'embed': self.embed_dim,
             'd_model': self.d_model,
             'n_layers': self.n_layers,

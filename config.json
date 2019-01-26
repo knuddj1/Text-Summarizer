@@ -1,16 +1,16 @@
 {
-    "path": null,
+    "path": "Gutenberg.zip",
     "min_len": 10,
     "max_len": 30,
     "worker": 8,
     "voc_size": 20000,
-    "batch": 512,
+    "batch": 128,
     "shuffle": true,
     "embed": 128,
-    "d_model": 256,
+    "d_model": 128,
     "heads": 8,
-    "layers": 3,
-    "dff": 2048,
-    "epoch": 10,
+    "layers": 4,
+    "dff": 1028,
+    "epoch": 100,
     "save": null
 }

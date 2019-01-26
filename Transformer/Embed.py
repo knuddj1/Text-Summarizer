@@ -38,7 +38,7 @@ class PositionalEncoder(nn.Module):
         pe = Variable(self.pe[:,:seq_len], requires_grad=False)
         if x.is_cuda:
             pe.cuda()
-        x = x + pe
+        x = x + pe.transpose(0,1)
         return self.dropout(x)
 
 class Embedder(nn.Module):

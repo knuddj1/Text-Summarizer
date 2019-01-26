@@ -22,7 +22,7 @@ def main():
     epochs = args['epoch']
     save_dir = args['save']
     loss_func = F.cross_entropy
-
+    
     # Retrieves the dataset, cleans, processes and creates tensors from it
     training_set = Dataset(path, min_len, max_len, n_workers, voc_n_keep)
 
@@ -36,7 +36,7 @@ def main():
     trainer = Trainer(vocab_size, embed_dim, d_model, n_layers, heads, d_ff, max_len)
 
     # Train model
-    trainer.train(train_iter, loss_func, epochs, target_pad, save_dir)
+    trainer.train(training_iter, loss_func, epochs, target_pad, save_dir, training_set.vocab)
 
 
 if __name__ == '__main__': 
