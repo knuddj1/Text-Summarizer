@@ -11,7 +11,10 @@ class SentenceSpider(scrapy.Spider):
     start_urls = [base_url]
 
     def parse(self, response):
-
+        
+        if not os.path.exists(out_dir):
+            os.mkdir(out_dir)
+         
         links = response.xpath('//*[@id="browse_section"]/div[@class="definitions_slider"]/ul[@class="bxslider"]/li/span/a/@href').extract()
 
         for link in links:
