@@ -8,6 +8,7 @@ base_url = 'https://sentence.yourdictionary.com/'
 
 class SentenceSpider(scrapy.Spider):
     name = "sentbot"
+    rotate_user_agent = True
     start_urls = [base_url]
 
     def parse(self, response):

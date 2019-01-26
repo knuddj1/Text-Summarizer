@@ -1,3 +1,5 @@
+import os
+
 # -*- coding: utf-8 -*-
 
 # Scrapy settings for sentence_scraper project
@@ -21,18 +23,16 @@ USER_AGENT="Mozilla/5.0"
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
-#DOWNLOAD_DELAY=0.5
-
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
-#CONCURRENT_REQUESTS_PER_DOMAIN = 16
-#CONCURRENT_REQUESTS_PER_IP = 16
+CONCURRENT_REQUESTS_PER_DOMAIN = 16
+CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED = False
@@ -57,6 +57,33 @@ ROBOTSTXT_OBEY = False
 #DOWNLOADER_MIDDLEWARES = {
 #    'sentence_scraper.middlewares.SentenceScraperDownloaderMiddleware': 543,
 #}
+
+# Retry many times since proxies often fail
+RETRY_TIMES = 1000
+# Retry on most error codes since proxies fail for different reasons
+RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
+
+PROXY_MODE = 0
+PROXY_LIST =  os.getcwd() + '\\list.txt'
+
+USER_AGENT_CHOICES = [
+    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:23.0) Gecko/20100101 Firefox/23.0',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.   36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
+    'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.146 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.146 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64; rv:24.0) Gecko/20140205 Firefox/24.0 Iceweasel/24.3.0',
+    'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0',
+    'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:28.0) AppleWebKit/534.57.2 (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2',
+]
+
+DOWNLOADER_MIDDLEWARES = {
+        'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 90,
+        'sentence_scraper.middlewares.RandomProxy': 100,
+        'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+        'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware' : None,
+        'sentence_scraper.middlewares.RotateUserAgentMiddleware': 400,
+    }
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
