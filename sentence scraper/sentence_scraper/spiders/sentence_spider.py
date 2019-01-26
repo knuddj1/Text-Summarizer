@@ -3,7 +3,7 @@ import json
 import os
 import re
 
-out_dir = 'C:/Users/The Baboon/Desktop/sentence_scraper/saves'
+out_dir 'data'
 base_url = 'https://sentence.yourdictionary.com/'
 
 class SentenceSpider(scrapy.Spider):
