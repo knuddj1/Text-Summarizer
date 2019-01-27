@@ -62,6 +62,8 @@ instance/
 
 # Scrapy stuff:
 .scrapy
+list.txt
+chromedriver.exe
 
 # Sphinx documentation
 docs/_build/
