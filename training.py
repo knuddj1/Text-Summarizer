@@ -45,7 +45,6 @@ class Trainer:
         self.model.cuda()
         self.model.train()
         start = time.time()
-        temp = start
         total_loss = 0
         
         for epoch in range(epochs):
@@ -72,12 +71,9 @@ class Trainer:
                 total_loss += loss.item()
                 if (i + 1) % print_every == 0:
                     loss_avg = total_loss / print_every
-                    print("time = %dm, epoch %d, iter = %d, loss = %.3f, \
-                    %ds per %d iters" % ((time.time() - start) // 60,
-                                         epoch + 1, i + 1, loss_avg, time.time() - temp,
-                                         print_every))
+                    print("time = %dm, epoch %d, iter = %d, loss = %.3f" % ((time.time() - start) // 60,
+                                                                            epoch + 1, i + 1, loss_avg))
                     total_loss = 0
-                    temp = time.time()
 
             if (epoch + 1) % save_every == 0:
                 self.save(save_dir, vocab, epoch + 1)
@@ -93,18 +89,17 @@ class Trainer:
 
         save_path = os.path.join(save_path, 'checkpoint {} epochs'.format(epoch))
 
-        to_save = {
-            'encoder': self.model.encoder.state_dict(),
-            'decoder': self.model.decoder.state_dict(),
-            'out': self.model.out.state_dict(),
-            'vocab': vocab.__dict__,
-            'optim': self.optim.state_dict(),
-            'embed': self.embed_dim,
-            'd_model': self.d_model,
-            'n_layers': self.n_layers,
-            'heads': self.heads,
-            'dff': self.d_ff,
-            'max_len': self.max_seq_len
-            }
+        to_save = {'encoder': self.model.encoder.state_dict(),
+                   'decoder': self.model.decoder.state_dict(),
+                   'out': self.model.out.state_dict(),
+                   'vocab': vocab.__dict__,
+                   'optim': self.optim.state_dict(),
+                   'embed': self.embed_dim,
+                   'd_model': self.d_model,
+                   'n_layers': self.n_layers,
+                   'heads': self.heads,
+                   'dff': self.d_ff,
+                   'dropout': self.dropout,
+                   'max_len': self.max_seq_len}
 
         torch.save(to_save, save_path)
