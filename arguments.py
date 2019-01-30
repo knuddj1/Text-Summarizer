@@ -1,5 +1,6 @@
 import argparse
 import json
+import sys
 from multiprocessing import cpu_count
 
 
@@ -14,8 +15,8 @@ class ConfigAction(argparse.Action):
             print('Make sure the path to the file is correct and it is in format .json')
             exit(0)
 
-        
         setattr(namespace, self.dest, config)
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='Parameters for Sentence Embedder Model')
@@ -32,6 +33,11 @@ def get_args():
     parser.add_argument('-heads', default=8, type=int)
     parser.add_argument('-layers', default=6, type=int)
     parser.add_argument('-dff', default=2048, type=int)
+    parser.add_argument('-dropout', default=0.1, type=float)
+    parser.add_argument('-glove', action='store_true')
+    parser.add_argument('-glove_size', type=int, required='-glove' in sys.argv)
+    parser.add_argument('-glove_path', required='-glove' in sys.argv)
+    parser.add_argument('-trainable', action='store_false')
     parser.add_argument('-epoch', default=10, type=int)
     parser.add_argument('-save', default=None)       
 

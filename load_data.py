@@ -10,16 +10,17 @@ from gensim.parsing.preprocessing import *
 from itertools import chain
 
 CUSTOM_FILTERS = [
-          lambda x: x.lower(), #To lowercase
+          lambda x: x.lower(),  # To lowercase
           lambda text: re.sub(r'https?:\/\/.*\s', '', text, flags=re.MULTILINE), #To Strip away URLs
-          strip_tags, #Remove tags from s using RE_TAGS.
-          strip_non_alphanum,#Remove non-alphabetic characters from s using RE_NONALPHA.
-          strip_punctuation, #Replace punctuation characters with spaces in s using RE_PUNCT.
-          strip_numeric, #Remove digits from s using RE_NUMERIC.
-          strip_multiple_whitespaces,#Remove repeating whitespace characters (spaces, tabs, line breaks) from s and turns tabs & line breaks into spaces using RE_WHITESPACE.
-          remove_stopwords, # Set of 339 stopwords from Stone, Denis, Kwantes (2010).
+          strip_tags,  # Remove tags from s using RE_TAGS.
+          strip_non_alphanum,  # Remove non-alphabetic characters from s using RE_NONALPHA.
+          strip_punctuation,  # Replace punctuation characters with spaces in s using RE_PUNCT.
+          strip_numeric,  # Remove digits from s using RE_NUMERIC.
+          strip_multiple_whitespaces,  # Remove repeating whitespace characters (spaces, tabs, line breaks) from s and turns tabs & line breaks into spaces using RE_WHITESPACE.
+          remove_stopwords,  # Set of 339 stopwords from Stone, Denis, Kwantes (2010).
           lambda x: strip_short(x)
          ]
+
 
 def split_sent(s, min_len, max_len):
     split = []
@@ -32,6 +33,7 @@ def split_sent(s, min_len, max_len):
             s = s[max_len:]
     return split
 
+
 def process_sentence(s, min_len, max_len):
     prepared = []
     tokens = preprocess_string(s, CUSTOM_FILTERS)
@@ -43,6 +45,7 @@ def process_sentence(s, min_len, max_len):
                 prepared.append(ss)
     return prepared
 
+
 def filter_sentences(text, min_len, max_len):
     filtered = []
     sents = nltk.sent_tokenize(text)
@@ -51,8 +54,9 @@ def filter_sentences(text, min_len, max_len):
             filtered.append(ps)
     return filtered
 
-'''Returns each file one at a time'''
+
 def read_zip_file(filepath):
+    """Returns each file one at a time"""
     zfile = zipfile.ZipFile(filepath)
     for finfo in zfile.infolist():
         ifile = zfile.open(finfo)

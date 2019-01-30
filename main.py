@@ -3,6 +3,8 @@ from dataset import Dataset
 from torch.utils.data import DataLoader
 from arguments import get_args
 from training import Trainer
+from glove import get_glove
+
 
 def main():
     args = get_args()
@@ -19,6 +21,8 @@ def main():
     n_layers = args['layers']
     heads = args['heads']
     d_ff = args['dff']
+    dropout = args['dropout']
+    trainable = args['trainable']
     epochs = args['epoch']
     save_dir = args['save']
     loss_func = F.cross_entropy
@@ -32,8 +36,16 @@ def main():
     # Pytorchs batch generator
     training_iter = DataLoader(training_set, batch_size, shuffle, num_workers=n_workers)
 
+    pretrained = None
+    if args['glove']:
+        embed_dim = args['glove_size']
+        print("Collecting GloVe embeddings size {}".format(embed_dim))
+        pretrained = get_glove(embed_dim, training_set.vocab, args['glove_path'])
+        print("Successfully collected.")
+
     # Creates model
-    trainer = Trainer(vocab_size, embed_dim, d_model, n_layers, heads, d_ff, max_len)
+    trainer = Trainer(vocab_size, embed_dim, d_model, n_layers,
+                      heads, d_ff, max_len, pretrained, trainable, dropout)
 
     # Train model
     trainer.train(training_iter, loss_func, epochs, target_pad, save_dir, training_set.vocab)
@@ -41,4 +53,3 @@ def main():
 
 if __name__ == '__main__': 
     main()
-    

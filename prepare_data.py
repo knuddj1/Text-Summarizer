@@ -1,7 +1,7 @@
 import multiprocessing
 import time
 import torch
-from nltk.util import pad_sequence
+
 
 def encode_s(s, voc, oov):
     s_enc = []
@@ -9,6 +9,7 @@ def encode_s(s, voc, oov):
         w_enc = voc[w] if w in voc else oov
         s_enc.append(w_enc)
     return s_enc
+
 
 def encode_sequences(seqs, voc, n_workers=None):
     print('Encoding sequences . .')
@@ -19,6 +20,7 @@ def encode_sequences(seqs, voc, n_workers=None):
     print('Encoding sequences finished. took {} seconds'.format(time.time() - start))
     return enc_seqs
 
+
 def add_padding(seqs, max_len, pad_token):
     print('Padding sequences . .')
     start = time.time()
@@ -26,6 +28,7 @@ def add_padding(seqs, max_len, pad_token):
         seqs[idx] = (seqs[idx] + [0] * (max_len - len(seqs[idx])))
     print('Padding sequences finished. took {} seconds'.format(time.time() - start))
     return seqs
+
 
 def prepare_inputs(seqs, voc, max_len, n_workers=None):
     enc_seqs = encode_sequences(seqs, voc, n_workers)
