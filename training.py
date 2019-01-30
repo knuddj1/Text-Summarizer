@@ -69,7 +69,7 @@ class Trainer:
                 self.optim.step()
                 
                 total_loss += loss.item()
-                if (i + 1) % print_every == 0:
+                if (i + 1) % print_every == 0 or (i + 1) == len(train_iter):
                     loss_avg = total_loss / print_every
                     print("time = %dm, epoch %d, iter = %d, loss = %.3f" % ((time.time() - start) // 60,
                                                                             epoch + 1, i + 1, loss_avg))
