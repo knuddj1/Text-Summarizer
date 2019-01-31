@@ -75,7 +75,7 @@ class Trainer:
                                                                             epoch + 1, i + 1, loss_avg))
 
             if (epoch + 1) % save_every == 0:
-                self.save(save_dir, vocab, epoch + 1)
+                self.save(save_dir, vocab, epoch + 1, total_loss / len(train_iter))
 
     def save(self, save_dir, vocab, epoch, loss):
         save_path = 'model'
