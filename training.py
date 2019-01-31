@@ -19,23 +19,24 @@ class Trainer:
         self.pretrained = pretrained
         self.trainable = trainable
         self.dropout = dropout
-        self.model, self.optim = self._setup_model()
+        self._setup_model()
 
     def _setup_model(self):
         print("Building model. .")
-        model = Transformer(self.vocab_size, self.embed_dim,
-                            self.d_model, self.n_layers, self.heads, 
-                            self.d_ff, self.max_seq_len, self.pretrained,
-                            self.trainable, self.dropout)
+        self.model = Transformer(self.vocab_size, self.embed_dim,
+                                 self.d_model, self.n_layers, self.heads,
+                                 self.d_ff, self.max_seq_len, self.pretrained,
+                                 self.trainable, self.dropout)
         
-        for p in model.parameters():
+        for p in self.model.parameters():
             if p.dim() > 1 and p.requires_grad:
                 nn.init.xavier_uniform_(p)
         print("Model successfully built")
-        print("Total parameters: ", sum([p.nelement() for p in model.parameters()]))
+        total_params = sum([p.nelement() for p in self.model.parameters()])
+        trainable_params = sum([p.numel() for p in self.model.parameters() if p.requires_grad])
+        print("Trainable parameters = {0}/{1} ".format(trainable_params, total_params))
 
-        optim = torch.optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.98), eps=1e-9)
-        return model, optim
+        self.optim = torch.optim.Adam(self.model.parameters(), lr=0.0001, betas=(0.9, 0.98), eps=1e-9)
 
     def train(self, train_iter, loss_func, epochs, target_pad,
               save_dir, vocab, save_every=10, print_every=5000):
@@ -45,10 +46,9 @@ class Trainer:
         self.model.cuda()
         self.model.train()
         start = time.time()
-        total_loss = 0
-        
+
         for epoch in range(epochs):
-        
+            total_loss = 0
             for i, batch in enumerate(train_iter):
                 self.model.zero_grad()
 
@@ -73,12 +73,11 @@ class Trainer:
                     loss_avg = total_loss / (i + 1)
                     print("time = %dm, epoch %d, iter = %d, loss = %.3f" % ((time.time() - start) // 60,
                                                                             epoch + 1, i + 1, loss_avg))
-                    total_loss = 0
 
             if (epoch + 1) % save_every == 0:
                 self.save(save_dir, vocab, epoch + 1)
 
-    def save(self, save_dir, vocab, epoch):
+    def save(self, save_dir, vocab, epoch, loss):
         save_path = 'model'
         if save_dir:
             if os.path.exists(save_dir):
@@ -89,7 +88,8 @@ class Trainer:
 
         save_path = os.path.join(save_path, 'checkpoint {} epochs'.format(epoch))
 
-        to_save = {'encoder': self.model.encoder.state_dict(),
+        to_save = {'loss': loss,
+                   'encoder': self.model.encoder.state_dict(),
                    'decoder': self.model.decoder.state_dict(),
                    'out': self.model.out.state_dict(),
                    'vocab': vocab.__dict__,
